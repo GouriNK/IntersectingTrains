@@ -1,0 +1,26 @@
+.red-line{
+  color:red;
+}
+.blue-line{
+  color:blue;
+}
+.green-line{
+  color:green;
+}
+.yellow-line{
+	color:#f0ad4e;
+}
+#green-dot{
+  z-index: 9999;
+  position: absolute;
+}
+.m-top-60{
+  margin-top:60px !important;
+}
+.nav > li.active {
+    text-decoration: none;
+    background-color: #eee;
+}
+.invalid-input{
+	border: 1px solid red;
+}

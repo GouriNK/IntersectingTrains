@@ -1,0 +1,227 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="https://cdn.rawgit.com/google/code-prettify/master/styles/desert.css">
+    <script src="js/common/jquery.min.js"></script>
+    <script src="js/common/angular.js"></script>
+    <script src="js/common/bootstrap.min.js"></script>
+    
+    <title>Trams</title>
+  </head>
+  <body>
+    <div ng-app="tramsApp"  ng-controller="AppController">
+      
+      <div class="container m-top-60">
+        <!--aside panel-->
+        <div class="col-sm-2">
+          <nav class="nav-sidebar">
+            <ul class="nav tabs">
+              <li class="active"><a href="#tab2" data-toggle="tab">Problem</a></li>
+              <li class=""><a href="#tab1" data-toggle="tab">Trams in motion</a></li>
+              <li class=""><a href="#tab3" data-toggle="tab">Explanation</a></li>
+              <li class=""><a href="#tab4" data-toggle="tab">Technologies used1</a></li>
+              <!-- <li class=""><a href="images/Gouri_Nandakumar_Resume.pdf">About Me</a></li> -->
+            </ul>
+          </nav>
+        </div>
+        <!-- tab content -->
+        <div class="col-md-10">
+          <div class="tab-content">
+            <div class="tab-pane text-style" id="tab1">
+              <div>
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Solution : Trams in motion</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="APassengers" class="red-line">Passenger Count on A</label>
+                          <input type="number" min="0" step="1" class="form-control" id="APassengers" ng-model="priority['red-dot']" ng-disabled="paused==false" ng-class="{'invalid-input' : valid_priority['red-dot']==false}">
+                        </div>
+                        <div class="form-group">
+                          <label for="BPassengers" class="green-line">Passenger Count on B</label>
+                          <input type="number"  min="0" step="1" class="form-control" id="BPassengers" ng-model="priority['green-dot']" ng-disabled="paused==false" ng-class="{'invalid-input' : valid_priority['green-dot']==false}">
+                        </div>
+                        <div class="form-group">
+                          <label for="CPassengers" class="blue-line">Passenger Count on C</label>
+                          <input type="number"  min="0" step="1" class="form-control" id="CPassengers" ng-model="priority['blue-dot']" ng-disabled="paused==false" ng-class="{'invalid-input' : valid_priority['blue-dot']==false}">
+                        </div>
+                        <button title="Start Trams" type="button" class="btn btn-success" ng-click="startRailway()" ng-disabled="paused==false"><span class="glyphicon glyphicon-play"></span></button>
+                        <button title="Pause Trams" type="button" class="btn btn-warning" ng-click="pauseRailway()" ng-disabled="paused==null || paused==true"><span class="glyphicon glyphicon-pause"></span></button>
+                        <button title="Stop Trams" type="button" class="btn btn-danger" ng-click="resetRailway()"><span class="glyphicon glyphicon-stop"></span></button>
+                        <div class="red-line" ng-if="valid_priority['green-dot']==false || valid_priority['blue-dot']==false || valid_priority['red-dot']==false"><br><small>Please enter valid passengers count.</small></div>
+                        <hr>
+                        <u><b>Change Path : <br></b></u><br>
+                        <button title="Path 1" type="button" class="btn btn-info" ng-click="changeRailwayTrack('TRIANGLE')" ng-disabled="paused==false">
+                        Path 1
+                        </button>
+                        <button title="Path 2" type="button" class="btn btn-info" ng-click="changeRailwayTrack('SQUARE')" ng-disabled="paused==false">
+                        Path 2
+                        </button>
+
+                        <hr>
+                        <u><b>Instructions :<br></b></u>
+                        <ul class="circle">
+                          <li>Click (<span class="glyphicon glyphicon-play green-line"></span>)to begin trams</li>
+                          <li>Click Pause (<span class="glyphicon glyphicon-pause yellow-line"></span>) or Stop(<span class="red-line glyphicon glyphicon-stop"></span>) trams to add or remove passengers.</li>
+                          <li>Feel free to change the path of the trams and restart journey!</li>
+                        </ul>
+                      </div>
+                      <div class="col-md-9">
+                        <div class="well well-lg">
+                          <svg width="700px" height="500px" viewBox="0 0 700 500">
+                            <text x="275" y="20" font-size = "20" font-weight="bold">{{pathname}}</text>
+                          <line x1="{{railwayLines['red-dot'][0].x}}" x2="{{railwayLines['red-dot'][railwayLines['red-dot'].length-1].x}}" y1="{{railwayLines['red-dot'][0].y}}" y2="{{railwayLines['red-dot'][railwayLines['red-dot'].length-1].y}}" stroke="#cccccc" stroke-width="1"></line>
+                          <circle ng-repeat="point in railwayLines['red-dot']" class="Agrey-dots" cx="{{point.x}}" cy="{{point.y}}" r="5" fill="#cccccc"  ></circle>
+                          <circle id="red-dot" cx="{{currentLoc['red-dot'].x}}" cy="{{currentLoc['red-dot'].y}}" r="5" fill="red"  ></circle>
+                          <text x="{{railwayLines['red-dot'][0].x - 5}}" y="{{railwayLines['red-dot'][0].y - 15}}">A</text>
+                        <line x1="{{railwayLines['green-dot'][0].x}}" x2="{{railwayLines['green-dot'][railwayLines['green-dot'].length-1].x}}" y1="{{railwayLines['green-dot'][0].y}}" y2="{{railwayLines['green-dot'][railwayLines['green-dot'].length-1].y}}" stroke="#cccccc" stroke-width="1"></line>
+                        <circle ng-repeat="point in railwayLines['green-dot']" class="Bgrey-dots" cx="{{point.x}}" cy="{{point.y}}" r="5" fill="#cccccc" ></circle>
+                        <circle id="green-dot" cx="{{currentLoc['green-dot'].x}}" cy="{{currentLoc['green-dot'].y}}" r="5" fill="green"  fill-rule="evenodd"></circle>
+                        <text x="{{railwayLines['green-dot'][0].x - 5}}" y="{{railwayLines['green-dot'][0].y - 15}}">B</text>
+                      <line x1="{{railwayLines['blue-dot'][0].x}}" x2="{{railwayLines['blue-dot'][railwayLines['blue-dot'].length-1].x}}" y1="{{railwayLines['blue-dot'][0].y}}" y2="{{railwayLines['blue-dot'][railwayLines['blue-dot'].length-1].y}}" stroke="#cccccc" stroke-width="1"></line>
+                      <circle ng-repeat="point in railwayLines['blue-dot']" class="Cgrey-dots" cx="{{point.x}}" cy="{{point.y}}" r="5" fill="#cccccc"  ></circle>
+                      <circle id="blue-dot" cx="{{currentLoc['blue-dot'].x}}" cy="{{currentLoc['blue-dot'].y}}" r="5" fill="blue"  ></circle>
+                      <text x="{{railwayLines['blue-dot'][0].x - 5}}" y="{{railwayLines['blue-dot'][0].y - 15}}">C</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane active text-style" id="tab2">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title">Problem</h3>
+          </div>
+          <div class="panel-body">
+            <img src="images/question.png" class="img-rounded pull-left">
+          </div>
+        </div>
+        
+      </div>
+      <div class="tab-pane text-style" id="tab3">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title">Explanation</h3>
+          </div>
+          <div class="panel-body">
+            <h3>Assumptions</h3>
+            <ul class="circle">
+              <li>The path of travel (railway track) is pre-defined with equally distanced stations.</li>
+              <li>At any point in time, there will be only one tram travelling on a path.</li>
+              <li>Trams are represented with dots of 3 different colours for simplicity.</li>
+              <li>Distance between start and end points of each path is the same.</li>
+              <li>Approximate time to cover any route one-way is assumed to be <b>6s</b> for implementation purpose.</li>
+              <li>There are 2 paths provided (for clarity purpose).Change in track layout will reset the trams to initial location.</li>
+              <li>Application supports Chome or Firefox browser.</li>
+              <li>Load on each tram increases/decreases only when tram is stopped/paused at any point on the track.</li>
+              <li>Load on a tram can vary from station to station.</li>
+              <li>If 2 or more trams, intersect at a point on the track, based on priority (load of passengers on tram), the higher passenger-loaded tram will move forward, while the other tram will wait until the crossing is complete and then move forward.</li>
+              <li>If more than one tram has the same priority, collision is avoided by allowing either of the trams to pass by first and then the other, irrespective of any pre-defined order.</li>
+            </ul>
+            <hr>
+            <h3>Algorithm</h3>
+            <pre class="prettyprint text-left">
+                  if the entered priority values are positive and not null{
+                    start_tram_motion=true
+                  }else{
+                    start_tram_motion=false
+                  }
+
+                  if(start_tram_motion == true) {
+                    Set the start and end points for each tram’s motion.
+                    Calculate the distance to be covered for each tram.
+                    Calculate the speed based on the distance to be covered and total time available.
+                    Calculate the intermediate offsets for each tram for each time slot from the total time.
+                  }
+                  for the total time avilable for one-way motion {
+                      for each tram {
+                        updated_location = current_location + offset
+                      }
+                      Check for collision of the trams with each other at the updated_location
+                      if trams have collided {
+                        Check priority of the trams involved in collision {
+                          for tram with higher priority {
+                            current_location = updated_location
+                          }
+                        }
+                        if tram was not involved in the collision {
+                          current_location = updated_location
+                        }
+                      }else{
+                        current_location = updated_location for all trams
+                      }
+                      Check if all trams have reached their destination stations
+                      if(one-way journey is complete for all trams) {
+                        Reverse the direction and repeat motion
+                      }
+                  }
+            </pre>
+           </div>
+        </div>
+      </div>
+      <div class="tab-pane text-style" id="tab4">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title">Technologies used</h3>
+          </div>
+          <div class="panel-body">
+            <ul class="nav nav-tabs">
+              <li class="active"><a data-toggle="tab" href="#javascript">Javascript</a></li>
+              <li><a data-toggle="tab" href="#html5">HTML5</a></li>
+              <li><a data-toggle="tab" href="#css3">CSS3</a></li>
+            </ul>
+            <div class="tab-content">
+              <div id="javascript" class="tab-pane fade in active">
+                <h3>Javascript</h3>
+                <p>
+                  <b>Angular JS</b> is used as a supporting javascript framework for this program.<br>
+                This gives on-the-go 2-way binding.<br></p>
+                <p>
+                  All changes in the DOM, for example (an update to the number of passengers) will automatically be
+                  updated on the javascript side for further calculations on the priority.
+                  <ul class="circle">
+                    <li> Angular ensures all data found on the scope object are automatically bound to the view. It quietly watches for changes to these properties and updates the view automatically.</li>
+                    <li>Reusable custom HTML elements can be written with angular js (directives) which will reduce code.</li>
+                  </ul>
+                </p>
+              </div>
+              <div id="html5" class="tab-pane fade">
+                <h3>HTML 5</h3>
+                <p>From HTML 5, SVG or Scalable Vector Graphics has been used for showing the trams in a plot. It is a XML-style markup driven vector graphic rendering engine for the browser.</p>
+                <ul class="circle">
+                  <li>Svg handles vector graphics and programmatic vector manipulation very well. It also allows to create vector shapes of all kinds for manipulation.</li>
+                  <li>SVGs have a DOM. So it’s easy to attach event handlers and manipulate elements like you would for other HTML block. To move an item you simply change its co-ordinates.</li>
+                </ul>
+              </div>
+              <div id="css3" class="tab-pane fade">
+                <h3>CSS 3 - Bootstrap</h3>
+                <p>Bootstrap CSS has been used for the designing the layout of the problem solution.</p>
+                <ul class="circle">
+                  <li>Bootstrap has pre-defined 12-column grids, layouts and components. </li>
+                  <li>It has styled and enhanced many different fundamental HTML elements such as headings, lists, tables, buttons, forms, etc. with extensible classes, which can be readily used.</li>
+                  <li>It also has an extensive list of components like drop down menus, pagination or alert boxes which are also styled and all of these components are bundled with javascript plugins.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/lang-css.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
